@@ -8,7 +8,7 @@ const {User} = require('./../models/user')
 const {todos, populateTodos, users, populateUsers} = require('./seed/seed');
 
 beforeEach(populateUsers);
-beforeEach(populateTodos);
+ beforeEach(populateTodos);
 
 describe('POST /todos', () => {
   it('should create a new todo', (done) => {
@@ -293,5 +293,24 @@ describe('POST /users/login' , () => {
         done();
       }).catch((e) => done(e));
     });
+  });
+});
+
+describe('DELETE /users/me/token', () => {
+  it('should remove auth token on logout', (done) => {
+    request(app)
+      .delete('/users/me/token')
+      .set('x-auth',users[0].tokens[0].token)
+      .expect(200)
+      .end((err,res) => {
+        if(err) {
+          return done(err);
+        }
+
+        User.findById(users[0]._id).then((user) => {
+          expect(user.tokens.length).toBe(0);
+          done();
+        }).catch((e) => done(e));
+      });
   });
 });
