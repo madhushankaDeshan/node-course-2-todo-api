@@ -90,8 +90,7 @@ app.patch('/todos/:id', (req, res) => {
     if (!todo) {
       return res.status(404).send();
     }
-
-    res.send({todo});
+  res.send({todo});
   }).catch((e) => {
     res.status(400).send();
   })
@@ -126,6 +125,14 @@ app.post('/users/login' , (req,res) => {
     }).catch((e) => {
       res.staus(400).send();
     });
+});
+
+app.delete('/users/me/token', authenticate, (req, res) => {
+  req.user.removeToken(req.token).then(() => {
+    res.status(200).send();
+  }, () => {
+    res.status(400).send();
+  });
 });
 
 app.listen(port, () => {
